@@ -20,6 +20,10 @@ defmodule EasyChat.Mixfile do
 
   defp deps do
     [
+      {:cowboy, "~> 1.1.2"},
+      {:plug, "~> 1.4.3"},
+      {:credo, "~> 0.8", only: [:dev, :test], runtime: false},
+      {:guardian, "~> 1.0"}
     ]
   end
 end
