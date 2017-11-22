@@ -1,7 +1,8 @@
 const path = require('path');
 const webpack = require('webpack');
+const ExtractTextPlugin = require("extract-text-webpack-plugin");
 
-const elmSource = path.dirname(__dirname) + '/assets/elm'
+const elmSource = path.dirname(__dirname) + '/assets/elm';
 
 module.exports = {
   entry: [
@@ -23,23 +24,24 @@ module.exports = {
       },
       {
         test: /\.(scss)$/,
-        use: [{
-          loader: 'style-loader'
-        }, {
-          loader: 'css-loader'
-        }, {
-          loader: 'postcss-loader',
-          options: {
-            plugins: function () {
-              return [
-                require('precss'),
-                require('autoprefixer')
-              ];
+        use: ExtractTextPlugin.extract({
+          fallback: "style-loader",
+          use: [{
+            loader: 'css-loader'
+          }, {
+            loader: 'postcss-loader',
+            options: {
+              plugins: function () {
+                return [
+                  require('precss'),
+                  require('autoprefixer')
+                ];
+              }
             }
-          }
-        }, {
-          loader: 'sass-loader'
-        }]
+          }, {
+            loader: 'sass-loader'
+          }]
+        })
       },
       {
         test: /\.(woff|woff2)(\?v=\d+\.\d+\.\d+)?$/, loader: 'url?limit=10000&mimetype=application/font-woff'
@@ -68,6 +70,7 @@ module.exports = {
       jQuery: 'jquery',
       'window.jQuery': 'jquery',
       Popper: ['popper.js', 'default']
-    })
+    }),
+    new ExtractTextPlugin('../css/app.css'),
   ]
 };
