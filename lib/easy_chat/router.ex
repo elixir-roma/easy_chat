@@ -21,8 +21,9 @@ defmodule EasyChat.Router do
 
   plug :dispatch
 
-  match _, do: send_resp(conn, 200, render_layout())
+  forward "/api/auth", to: EasyChat.Auth.Router
 
+  match _, do: send_resp(conn, 200, render_layout())
 
   defp render_layout do
     unquote File.read!(__DIR__ <> "/../../priv/static/html/layout.html")

@@ -1,7 +1,7 @@
-defmodule EasyChat.User.Repository do
+defmodule EasyChat.User.StubRepository do
   alias EasyChat.User.Model, as: User
   @moduledoc """
-  This module store the users
+  This module simulate an user repository
   """
 
   def fetch(_) do

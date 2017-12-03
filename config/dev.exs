@@ -5,4 +5,4 @@ config :easy_chat, EasyChat.Auth.Guardian,
        secret_key: "test"
 
 config :easy_chat,
-       user_repo: EasyChat.User.StubRepository
+       user_repo: EasyChat.User.Repository
