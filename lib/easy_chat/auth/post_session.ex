@@ -27,6 +27,6 @@ defmodule EasyChat.Auth.PostSession do
   defp set_content(conn, token) do
     conn
     |> put_resp_header("content-type", "application/json")
-    |> resp(200, "{'refresh_token': '#{token}}'")
+    |> resp(200, "{'refresh_token': '#{token}'}")
   end
 end
