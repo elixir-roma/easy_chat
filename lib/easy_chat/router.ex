@@ -6,7 +6,8 @@ defmodule EasyChat.Router do
   """
 
   if Mix.env == :dev do
-    use Plug.Debugger
+    plug Plug.Debugger
+    plug Plug.Logger
   end
 
   plug :match
