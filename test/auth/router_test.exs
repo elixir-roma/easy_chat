@@ -18,18 +18,41 @@ defmodule EasyChat.Auth.RouterTest do
 
   test "Refresh a session should return an access token" do
     conn = conn(:post, "/session", %{"username" => "test_user", "password" => "test_pass"})
-    |> Router.call(@opts)
+           |> Router.call(@opts)
 
     body = conn.resp_body
-    |> Poison.decode!
+           |> Poison.decode!
 
     conn = conn(:put, "/refresh")
-    |> put_req_header("authorization", "Bearer #{body["refresh_token"]}")
+           |> put_req_header("authorization", "Bearer #{body["refresh_token"]}")
 
     conn = Router.call(conn, @opts)
 
     assert [auth_header|_] = get_resp_header(conn, "authorization")
     assert [_, token] = String.split auth_header
     assert {:ok, %{"typ" => "access"}} = EasyChat.Auth.Guardian.decode_and_verify(token)
+  end
+
+  test "Delete a session should invalidate an access token" do
+    conn = conn(:post, "/session", %{"username" => "test_user", "password" => "test_pass"})
+           |> Router.call(@opts)
+
+    body = conn.resp_body
+           |> Poison.decode!
+
+    conn = conn(:delete, "/session")
+           |> put_req_header("authorization", "Bearer #{body["refresh_token"]}")
+
+    conn = Router.call(conn, @opts)
+
+    assert conn.status == 204
+
+# todo: add guardian_db to enable this feature
+#    conn = conn(:put, "/refresh")
+#           |> put_req_header("authorization", "Bearer #{body["refresh_token"]}")
+#
+#    conn = Router.call(conn, @opts)
+#
+#    assert conn.status == 401
   end
 end

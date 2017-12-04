@@ -3,6 +3,7 @@ defmodule EasyChat.Auth.Router do
   @moduledoc false
 
   alias EasyChat.Auth.PostSession
+  alias EasyChat.Auth.DeleteSession
   alias EasyChat.Auth.PutSession
 
   plug :match
@@ -14,5 +15,6 @@ defmodule EasyChat.Auth.Router do
   plug :dispatch
 
   post "/session", to: PostSession
+  delete "/session", to: DeleteSession
   put "/refresh", to: PutSession, init_opts: [type: "refresh"]
 end
