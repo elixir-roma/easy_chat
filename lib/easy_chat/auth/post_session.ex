@@ -16,7 +16,7 @@ defmodule EasyChat.Auth.PostSession do
         {:ok, refresh_token, _} =
           Guardian.encode_and_sign(user, %{}, token_type: "refresh", ttl: {4, :weeks})
         conn
-        |> put_resp_header("authentication", "Bearer #{access_token}")
+        |> put_resp_header("authorization", "Bearer #{access_token}")
         |> set_content(refresh_token)
         |> send_resp
       {:error} ->
@@ -27,6 +27,6 @@ defmodule EasyChat.Auth.PostSession do
   defp set_content(conn, token) do
     conn
     |> put_resp_header("content-type", "application/json")
-    |> resp(200, "{'refresh_token': '#{token}'}")
+    |> resp(200, Poison.encode! %{refresh_token: token})
   end
 end
