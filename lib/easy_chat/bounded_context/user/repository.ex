@@ -17,6 +17,18 @@ defmodule EasyChat.BoundedContext.User.Repository do
     end
   end
 
+  # to get the list of the local users
+  def list() do
+    for {key, _} <- Agent.get(__MODULE__, fn map -> Map.to_list(map) end), do:
+      {node(), Enum.join(["user", key], ":")}
+  end
+
+  # to get the node weight
+  def count() do
+    Agent.get(__MODULE__, fn map -> Map.size(map) end)
+  end
+
+
   def insert(%{"username" => username, "password" => password}) do
     case Agent.get(__MODULE__, fn map -> Map.get(map, username) end) do
       nil ->
