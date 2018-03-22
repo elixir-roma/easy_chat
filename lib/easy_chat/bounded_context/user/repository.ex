@@ -25,7 +25,7 @@ defmodule EasyChat.BoundedContext.User.Repository do
 
   # to get the node weight
   def count() do
-    Agent.get(__MODULE__, fn map -> Map.size(map) end)
+    {:users_count, Agent.get(__MODULE__, fn map -> Map.size(map) end)}
   end
 
 
