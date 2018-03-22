@@ -7,9 +7,10 @@ defmodule EasyChat.Application do
   import Supervisor.Spec
 
   def start(_type, _args) do
+    {http_port, _} = Integer.parse(System.get_env("HTTP_PORT"))
     children = [
       worker(EasyChat.BoundedContext.User.Repository, []),
-      Cowboy.child_spec(:http, Router, [], port: 8080)
+      Cowboy.child_spec(:http, Router, [], port: http_port)
     ]
 
     opts = [strategy: :one_for_one, name: EasyChat.Supervisor]
