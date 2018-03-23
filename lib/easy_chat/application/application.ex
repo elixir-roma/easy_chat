@@ -14,6 +14,7 @@ defmodule EasyChat.Application do
     ]
 
     opts = [strategy: :one_for_one, name: EasyChat.Supervisor]
+    DistributionSup.Supervisor.start_link()
     Supervisor.start_link(children, opts)
   end
 end
