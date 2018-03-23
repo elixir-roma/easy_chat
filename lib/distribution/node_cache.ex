@@ -2,12 +2,23 @@ defmodule NodeCache do
   @moduledoc false
 
 
+  def users_status() do
+    GenServer.call(__MODULE__, :users_status)
+  end
+
+  def messages_status() do
+    GenServer.call(__MODULE__, :messages_status)
+  end
+
+  def insert(username, password) do
+    GenServer.call(__MODULE__, {:insert_to_lower, username, password})
+  end
 
 
   use GenServer
 
   def start_link() do
-    GenServer.start_link(__MODULE__, [])
+    GenServer.start_link(__MODULE__, [], name: __MODULE__)
   end
 
   def init(_opts) do
@@ -39,7 +50,6 @@ defmodule NodeCache do
 
   def handle_info(:update_cache, state) do
     Process.send_after(self(), :update_cache, 5_000)
-    ### update the tables chace here...
     spawn_link(__MODULE__, :call, [])
     {:noreply, state}
   end
@@ -48,12 +58,42 @@ defmodule NodeCache do
     {:noreply, state}
   end
 
-
-  def handle_call(:status, _from, state) do
-
-
-    {:reply, :ok, state}
+  def handle_call(:users_status, _from, state) do
+    w = :ets.tab2list(:users_weight)
+    {:reply, w, state}
   end
+
+  def handle_call({:insert_to_lower, username, password}, _from, state) do
+
+    s = Enum.sort(
+      :ets.tab2list(:users_weight),
+      fn ({_, _, value}, {_, _, valuey}) -> valuey > value end
+    )
+    {node, _, _} = List.first(s)
+    IO.puts "lower: #{inspect(node)}"
+    case EasyChat.BoundedContext.User.Repository.exist(username) do
+      :true ->
+        IO.puts(" DU")
+        {:reply, :exist, state}
+      :false ->
+        r = :rpc.call(
+          node,
+          EasyChat.BoundedContext.User.Repository,
+          :insert,
+          [%{"username" => username, "password" => password}]
+        )
+        IO.puts "result: #{inspect(r)}"
+        {:reply, r, state}
+    end
+
+
+  end
+
+  def handle_call(:messages_status, _from, state) do
+    w = :ets.tab2list(:messages_weight)
+    {:reply, w, state}
+  end
+
 
   def handle_cast(_msg, state) do
     {:noreply, state}

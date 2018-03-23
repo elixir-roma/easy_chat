@@ -28,6 +28,12 @@ defmodule EasyChat.BoundedContext.User.Repository do
     {:users_count, Agent.get(__MODULE__, fn map -> Map.size(map) end)}
   end
 
+  def exist(username) do
+    case Agent.get(__MODULE__, fn map -> Map.get(map, username) end) do
+      nil -> :false
+      _ -> :true
+    end
+  end
 
   def insert(%{"username" => username, "password" => password}) do
     case Agent.get(__MODULE__, fn map -> Map.get(map, username) end) do
@@ -42,12 +48,17 @@ defmodule EasyChat.BoundedContext.User.Repository do
   defp hash(password), do: Base.encode64(:crypto.hash(:sha, password))
 
   defp insert_username(username, password) do
-    Agent.update(__MODULE__,
+    Agent.update(
+      __MODULE__,
       fn map ->
-        Map.put_new_lazy(map, username,
+        Map.put_new_lazy(
+          map,
+          username,
           fn ->
             hash(password)
-          end)
-      end)
+          end
+        )
+      end
+    )
   end
 end
