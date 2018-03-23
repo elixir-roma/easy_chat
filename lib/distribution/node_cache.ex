@@ -73,7 +73,6 @@ defmodule NodeCache do
     IO.puts "lower: #{inspect(node)}"
     case EasyChat.BoundedContext.User.Repository.exist(username) do
       :true ->
-        IO.puts(" DU")
         {:reply, :exist, state}
       :false ->
         r = :rpc.call(
