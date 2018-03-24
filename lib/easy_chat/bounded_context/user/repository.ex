@@ -48,12 +48,8 @@ defmodule EasyChat.BoundedContext.User.Repository do
   defp hash(password), do: Base.encode64(:crypto.hash(:sha, password))
 
   defp insert_username(username, password) do
-    Agent.update(
-      __MODULE__,
-      fn map ->
-        Map.put_new_lazy(
-          map,
-          username,
+    Agent.update(__MODULE__, fn map ->
+        Map.put_new_lazy(map, username,
           fn ->
             hash(password)
           end
