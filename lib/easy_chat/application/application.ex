@@ -7,7 +7,13 @@ defmodule EasyChat.Application do
   import Supervisor.Spec
 
   def start(_type, _args) do
-    {http_port, _} = Integer.parse(System.get_env("HTTP_PORT"))
+    http_port = case System.get_env("HTTP_PORT") do
+      nil -> 8080
+      value -> {res, _} = Integer.parse(value)
+               res
+    end
+
+
     children = [
       worker(EasyChat.BoundedContext.User.Repository, []),
       Cowboy.child_spec(:http, Router, [], port: http_port)
