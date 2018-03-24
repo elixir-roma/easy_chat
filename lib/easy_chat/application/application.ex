@@ -13,7 +13,6 @@ defmodule EasyChat.Application do
                res
     end
 
-
     children = [
       worker(EasyChat.BoundedContext.User.Repository, []),
       Cowboy.child_spec(:http, Router, [], port: http_port)
