@@ -15,6 +15,7 @@ defmodule EasyChat.Application do
 
     children = [
       worker(EasyChat.BoundedContext.User.Repository, []),
+      worker(EasyChat.BoundedContext.Session.Repository, []),
       Cowboy.child_spec(:http, Router, [], port: http_port)
     ]
 
