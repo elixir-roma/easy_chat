@@ -5,11 +5,12 @@ defmodule EasyChat.BoundedContext.Session.PostSession do
   alias EasyChat.BoundedContext.Session.Guardian
   import Plug.Conn
 
+  @user_repository Application.get_env(:easy_chat, :user_repo)
+
   def init(options), do: options
 
   def call(conn, _) do
-    user_repository = Application.get_env(:easy_chat, :user_repo)
-    case user_repository.fetch(conn.body_params) do
+    case @user_repository.fetch(conn.body_params) do
       {:ok, user} ->
         response_with_token_pair(user, conn)
       _ ->
