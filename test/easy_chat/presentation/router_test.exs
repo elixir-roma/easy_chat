@@ -28,7 +28,8 @@ defmodule EasyChat.Presentation.RouterTest do
   end
 
   defp random_string do
-    :crypto.strong_rand_bytes(8)
+    8
+    |> :crypto.strong_rand_bytes()
     |> Base.url_encode64
     |> binary_part(0, 8)
   end
