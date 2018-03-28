@@ -7,4 +7,7 @@ config :easy_chat, EasyChat.BoundedContext.Session.Guardian,
   token_module: Guardian.Token.Jwt
 
 config :easy_chat,
-  user_repo: EasyChat.BoundedContext.User.Repository
+  user_repo: EasyChat.BoundedContext.User.Repository,
+  session_repo:  EasyChat.BoundedContext.Session.RepositoryMock,
+  auth: EasyChat.BoundedContext.Session.GuardianMock
+
