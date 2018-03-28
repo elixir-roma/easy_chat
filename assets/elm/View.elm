@@ -1,7 +1,8 @@
 module View exposing (..)
 
 import Login.View exposing (..)
-import Register.View exposing(view)
+import Register.View exposing (view)
+import Chat.View exposing (view)
 import Models exposing (Model)
 import Msgs exposing (Msg)
 import Html exposing (Html, text, div)
@@ -14,7 +15,7 @@ view model =
     Models.SignupRoute ->
       Register.View.view model.login
     Models.ChatRoute ->
-      text ""
+      Chat.View.view model
     Models.NotFoundRoute ->
       notFoundView
 
