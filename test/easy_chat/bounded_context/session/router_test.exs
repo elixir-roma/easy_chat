@@ -3,13 +3,13 @@ defmodule EasyChat.BoundedContext.Session.RouterTest do
   use Plug.Test
 
   alias EasyChat.BoundedContext.Session.Router
-  alias EasyChat.BoundedContext.User.Repository
+  alias EasyChat.BoundedContext.User.Repository, as: Repo
 
   @opts Router.init([])
 
   test "Post a new session to / should autenticate an user" do
 
-    Repository.insert(%{"username" => "test_user", "password" => "test_pass"})
+    Repo.insert(%{"username" => "test_user", "password" => "test_pass"})
 
     user_json = %{"username" => "test_user", "password" => "test_pass"}
 
@@ -31,5 +31,4 @@ defmodule EasyChat.BoundedContext.Session.RouterTest do
 
     assert conn.status == 401
   end
-
 end

@@ -17,11 +17,22 @@ defmodule EasyChat.Application do
       worker(EasyChat.BoundedContext.User.Repository, []),
       worker(EasyChat.BoundedContext.Session.Repository, []),
       worker(EasyChat.BoundedContext.Chat.Repository, []),
-      Cowboy.child_spec(:http, Router, [], port: http_port)
+      Cowboy.child_spec(:http, Router, [], port: http_port,
+        dispatch: dispatch())
     ]
 
     opts = [strategy: :one_for_one, name: EasyChat.Supervisor]
     DistributionSup.Supervisor.start_link()
     Supervisor.start_link(children, opts)
+  end
+
+  def dispatch do
+    [
+      {:_, [
+          {"/ws", EasyChat.BoundedContext.Chat.Websocket, []},
+          {:_, Cowboy.Handler, {Router, []}}
+        ]
+      }
+    ]
   end
 end

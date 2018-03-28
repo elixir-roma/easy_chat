@@ -1,4 +1,4 @@
-defmodule EasyChat.BoundedContext.Chat.CgetMessage do
+defmodule EasyChat.BoundedContext.Chat.CgetMessages do
   @moduledoc false
 
   @repo Application.get_env(:easy_chat, :message_repo)
