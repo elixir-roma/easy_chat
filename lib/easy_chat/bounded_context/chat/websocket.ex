@@ -1,10 +1,11 @@
 defmodule EasyChat.BoundedContext.Chat.Websocket do
+  @moduledoc false
 
   @session_repository Application.get_env(:easy_chat, :session_repo)
   @auth Application.get_env(:easy_chat, :auth)
 
   def init(req, _state) do
-    {:cowboy_websocket, req, _newState = %{}, %{:idle_timeout => 60000 * 20}}
+    {:cowboy_websocket, req, _new_state = %{}, %{:idle_timeout => 60_000 * 20}}
   end
 
   def websocket_init(state) do
@@ -34,7 +35,7 @@ defmodule EasyChat.BoundedContext.Chat.Websocket do
   end
 
   def terminate(_reason, _req, state) do
-    {:ok, _name} = ChatRoom.remove_client(state.room.pid, self())
+    {:ok, _name} = @session_repository.remove(self())
     :ok
   end
 end
