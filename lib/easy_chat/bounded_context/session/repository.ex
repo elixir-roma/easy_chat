@@ -11,7 +11,8 @@ defmodule EasyChat.BoundedContext.Session.Repository do
 
   def remove(pid) do
     Agent.update __MODULE__, fn map ->
-      Enum.filter(map, fn {_, user_pid} -> pid != user_pid end)
+      map
+      |> Enum.filter(fn {_, user_pid} -> pid != user_pid end)
       |> Enum.into(%{})
     end
   end
