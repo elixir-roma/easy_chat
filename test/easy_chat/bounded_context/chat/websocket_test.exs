@@ -31,4 +31,6 @@ defmodule EasyChat.BoundedContext.Chat.WebsocketTest do
 
     assert_receive {{:insert, {"testuser" , _}}, Repo}
   end
+
+  
 end
