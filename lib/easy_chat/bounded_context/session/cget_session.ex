@@ -1,4 +1,4 @@
-defmodule EasyChat.BoundedContext.Session.Cget do
+defmodule EasyChat.BoundedContext.Session.CgetSession do
   @moduledoc false
 
   @repo Application.get_env(:easy_chat, :session_repo)
@@ -7,6 +7,9 @@ defmodule EasyChat.BoundedContext.Session.Cget do
   def init(opts), do: opts
 
   def call(conn, _) do
-    Poison.encode! @repo.get_all()
+    content = Poison.encode! @repo.get_all()
+    conn
+    |> resp(200, content)
+    |> send_resp
   end
 end
