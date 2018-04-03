@@ -17,6 +17,5 @@ defmodule EasyChat.BoundedContext.User.RouterTest do
     |> Poison.decode!
 
     assert Map.has_key? response, "access_token"
-    assert Map.has_key? response, "refresh_token"
   end
 end
