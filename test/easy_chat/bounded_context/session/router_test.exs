@@ -25,9 +25,18 @@ defmodule EasyChat.BoundedContext.Session.RouterTest do
   end
 
   test "Post a new session to / should return 401 if the user does not exists" do
-    conn = conn(:post, "/", %{"username" => "unexistent_user",
-                              "password" => "test_pass"})
-           |> Router.call(@opts)
+    conn = :post
+    |> conn("/", %{"username" => "unexistent_user",
+                    "password" => "test_pass"})
+    |> Router.call(@opts)
+
+    assert conn.status == 401
+  end
+
+  test "Get / should return 401 without a token" do
+    conn = :get
+    |> conn("/")
+    |> Router.call(@opts)
 
     assert conn.status == 401
   end

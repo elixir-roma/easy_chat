@@ -7,11 +7,7 @@ defmodule EasyChat.BoundedContext.User.Router do
 
   plug :match
 
-  plug Guardian.Plug.Pipeline, module: ECGuardian
-  plug Guardian.Plug.VerifyHeader
-  plug Guardian.Plug.LoadResource, allow_blank: true
+  post "/", to: PostUser
 
   plug :dispatch
-
-  post "/", to: PostUser
 end

@@ -20,10 +20,11 @@ defmodule EasyChat.Presentation.Router do
     at: "/", from: {:easy_chat, "priv/static"}, gzip: false,
     only: ~w(css fonts images js favicon.ico robots.txt)
 
-  plug :dispatch
-
-  forward "/api/session", to: EasyChat.BoundedContext.Session.Router
   forward "/api/user", to: EasyChat.BoundedContext.User.Router
+  forward "/api/message", to: EasyChat.BoundedContext.Chat.Router
+  forward "/api/session", to: EasyChat.BoundedContext.Session.Router
+
+  plug :dispatch
 
   match _, do: send_resp(conn, 200, render_layout())
 
