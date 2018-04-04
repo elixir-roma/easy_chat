@@ -2,7 +2,6 @@ module Models exposing (..)
 
 type alias Model = { route : Route
                    , login : Login
-                   , refresh_token : Maybe String
                    , access_token : Maybe String
                    }
 
@@ -13,9 +12,7 @@ type Route
     | NotFoundRoute
 
 type alias Credentials =
-    { access_token : String
-    , refresh_token : String
-    }
+    { access_token : String }
 
 type alias Login = { username : String
                    , password : String
@@ -29,4 +26,4 @@ initialLogin =
 
 initialModel : Route -> Model
 initialModel route
-  = Model route initialLogin Nothing Nothing
+  = Model route initialLogin Nothing
