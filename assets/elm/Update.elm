@@ -74,9 +74,8 @@ userEncoder model =
 
 tokenDecoder : Decoder Credentials
 tokenDecoder =
-    Decode.map2 Credentials
+    Decode.map Credentials
         (Decode.field "access_token" Decode.string)
-        (Decode.field "refresh_token" Decode.string)
 
 authUser : Model -> String -> Http.Request Credentials
 authUser model apiUrl =
@@ -100,7 +99,7 @@ getTokenCompleted model result =
           let
             newModel : Model
             newModel =
-                { model | access_token = Just credentials.access_token, refresh_token = Just credentials.refresh_token }
+                { model | access_token = Just credentials.access_token }
 
             newLogin : Login
             newLogin = Login model.login.username  ""  "" False
