@@ -19,7 +19,7 @@ defmodule EasyChat.BoundedContext.Chat.RepositoryMock do
   end
 
   ## Mock callbacks
-  def handle_call({:stub, stubbed_response}, from, {listeners, _}) do
+  def handle_call({:stub, stubbed_response}, _, {listeners, _}) do
     {:reply, :ok, {listeners, stubbed_response}}
   end
   def handle_call(:subscribe, {pid, _}, {listeners, stubbed_response}) do
@@ -27,14 +27,6 @@ defmodule EasyChat.BoundedContext.Chat.RepositoryMock do
   end
 
   # Mocked api
-  def insert(content) do
-    GenServer.call(__MODULE__, {:side_effect, {:insert, content}})
-  end
-
-  def get_all do
-    GenServer.call(__MODULE__, :stubbed)
-  end
-
   def handle_call({:side_effect, message}, _from, {listeners, _} = state) do
     send_to_listeners(listeners, message)
     {:reply, :ok, state}
@@ -42,6 +34,14 @@ defmodule EasyChat.BoundedContext.Chat.RepositoryMock do
 
   def handle_call(:stubbed, _from, {_, stubbed_response} = state) do
     {:reply, stubbed_response, state}
+  end
+
+  def insert(content) do
+    GenServer.call(__MODULE__, {:side_effect, {:insert, content}})
+  end
+
+  def get_all do
+    GenServer.call(__MODULE__, :stubbed)
   end
 
   defp send_to_listeners(listeners, message) do

@@ -9,5 +9,5 @@ config :easy_chat, EasyChat.BoundedContext.Session.Guardian,
 config :easy_chat,
   user_repo: EasyChat.BoundedContext.User.Repository,
   session_repo:  EasyChat.BoundedContext.Session.RepositoryMock,
-  auth: EasyChat.BoundedContext.Session.GuardianMock
-
+  auth: EasyChat.BoundedContext.Session.GuardianMock,
+  message_repo: EasyChat.BoundedContext.Chat.RepositoryMock

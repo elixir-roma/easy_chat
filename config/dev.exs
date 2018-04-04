@@ -9,4 +9,6 @@ config :easy_chat, EasyChat.BoundedContext.Session.Guardian,
 config :easy_chat,
   session_repo: EasyChat.BoundedContext.Session.Repository,
   auth: EasyChat.BoundedContext.Session.Guardian,
-  user_repo: NodeCache
+  user_repo: NodeCache,
+  message_repo: EasyChat.BoundedContext.Chat.Repository
+  
