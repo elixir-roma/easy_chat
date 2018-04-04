@@ -3,12 +3,13 @@ defmodule EasyChat.BoundedContext.Chat.Router do
   @moduledoc false
 
   alias EasyChat.BoundedContext.Chat.CgetMessage
+  alias EasyChat.BoundedContext.Session.GuardPipeline
 
   plug :match
 
   get "/"  do
     GuardPipeline.call(conn, route: fn conn ->
-      CgetSession.call(conn, [])
+      CgetMessage.call(conn, [])
     end)
   end
 
