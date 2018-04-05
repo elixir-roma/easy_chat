@@ -3,7 +3,7 @@ defmodule EasyChat.BoundedContext.Chat.Repository do
 
   defmodule Message do
     @moduledoc false
-    defstruct [:sender, :message]
+    defstruct [:sender, :content]
   end
 
   def start_link do
@@ -12,6 +12,10 @@ defmodule EasyChat.BoundedContext.Chat.Repository do
 
   def insert(%Message{} = message) do
     Agent.update(__MODULE__, &([message|Enum.take(&1, 100)]))
+  end
+
+  def insert(%{sender: sender, content: content}) do
+    insert(%Message{sender: sender, content: content})
   end
 
   def get_all do
