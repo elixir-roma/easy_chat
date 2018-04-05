@@ -17,7 +17,7 @@ update msg model =
     OnLocationChange location ->
       let
         newRoute =
-            parseLocation location
+            parseLocation model location
       in
         ( { model | route = newRoute }, Cmd.none )
     UpdatePassword password ->
@@ -104,7 +104,7 @@ getTokenCompleted model result =
             newLogin : Login
             newLogin = Login model.login.username  ""  "" False
           in
-            ( { newModel | login = newLogin }, Cmd.none )
+            ( { newModel | login = newLogin }, newUrl "/#chat" )
         Err error ->
           let
             newLogin : Login
