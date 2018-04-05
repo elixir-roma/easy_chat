@@ -3,6 +3,8 @@ module Models exposing (..)
 type alias Model = { route : Route
                    , login : Login
                    , access_token : Maybe String
+                   , people : List String
+                   , messages: List Message
                    }
 
 type Route
@@ -13,6 +15,11 @@ type Route
 
 type alias Credentials =
     { access_token : String }
+
+type alias Message =
+    { username : String
+    , content : String
+    }
 
 type alias Login = { username : String
                    , password : String
@@ -26,4 +33,4 @@ initialLogin =
 
 initialModel : Route -> Model
 initialModel route
-  = Model route initialLogin Nothing
+    = Model route initialLogin Nothing ["An User"] [ Message "An User" "My first message"]

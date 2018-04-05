@@ -1,6 +1,6 @@
 module Chat.View exposing (..)
 
-import Models exposing (Model)
+import Models exposing (Model, Message)
 import Msgs exposing (Msg)
 import Html exposing ( Html
                      , text
@@ -11,13 +11,18 @@ import Html exposing ( Html
                      , i
                      , img
                      , nav
+                     , strong
+                     , article
                      , section
+                     , textarea
                      )
 import Html.Attributes exposing ( attribute
                                 , class
                                 , alt
                                 , src
                                 , href
+                                , placeholder
+                                , rows
                                 )
 
 view : Model -> Html Msg
@@ -61,14 +66,63 @@ view model =
         ]
       , section [ attribute "style" "height: calc(100vh - 52px);" ]
           [ div [ class "columns is-gapless" ]
-                [ div [ class "column is-one-third is-hidden-mobile" ]
+                [ div [ class "column is-one-quarter is-hidden-mobile" ]
                       [ p
-                        [ attribute "style" "background-color: #eee;height: calc(100vh - 52px);"
-                        ] [ text "text" ] ]
+                        [ attribute "style" "background-color: #eee;height: calc(100vh - 53px);overflow:auto;"
+                        ] <| List.map generate_user_item model.people
+                      ]
                 , div [ class "column" ]
                       [ p
-                        [ attribute "style" "background-color: #ddd;height: calc(100vh - 52px);"
-                        ] [ text "text" ] ]
+                        [ attribute "style" "margin-top:auto;background-color: #ddd;height: calc(100vh - 100px);overflow:auto;"
+                        ] <| List.map generate_message_item model.messages
+                      , div [ class "field has-addons" ]
+                          [ div [ class "control", attribute "style" "width: 100%" ]
+                                [ textarea [ class "textarea", placeholder "Your message...", rows 1 ]
+                                      []
+                                ]
+                          , div [ class "control" ]
+                              [ a [ class "button is-primary", attribute "style" "height: 46px" ] [ text "Send" ]
+                              ]
+                          ]
+                      ]
                 ]
           ]
       ]
+
+
+generate_user_item : String -> Html Msg
+generate_user_item username =
+    div [ class "box", attribute "style" "background-color: #eee;margin: 0;" ]
+    [ article [ class "media" ]
+        [ div [ class "media-content" ]
+            [ div [ class "content" ]
+                [ p [ ]
+                    [ strong []
+                        [ text username ]
+                    ]
+                ]
+            ]
+        ]
+    ]
+
+generate_message_item : Message -> Html Msg
+generate_message_item message =
+    div [class "column is-full", attribute "style" "margin: 0;padding:0;" ]
+        [ div [ class "box", attribute "style" "background-color: #bbb;margin: 0;" ]
+              [ article [ class "media" ]
+                    [ div [ class "media-left" ]
+                          [ p []
+                                [ strong []
+                                      [ text <| message.username ++ ":" ]
+                                ]
+                          ]
+                    , div [ class "media-content" ]
+                          [ div [ class "content" ]
+                                [ p []
+                                      [ text message.content ]
+                                ]
+                          ]
+                    ]
+              ]
+
+        ]

@@ -1,6 +1,6 @@
 module Main exposing (..)
 
-import Models exposing (Model, initialModel)
+import Models exposing (Model, initialModel, Route(..))
 import Msgs exposing (Msg)
 import Navigation exposing (Location)
 import Routing
@@ -11,8 +11,7 @@ import View exposing (view)
 init : Location -> ( Model, Cmd Msg )
 init location =
     let
-        currentRoute =
-            Routing.parseLocation location
+        currentRoute = LoginRoute
     in
         ( initialModel currentRoute, Cmd.none )
 
