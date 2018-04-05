@@ -34,7 +34,7 @@ defmodule EasyChat.BoundedContext.Chat.Websocket do
     {:reply, {:text, data}, state}
   end
 
-  def terminate(_reason, _req, state) do
+  def terminate(_reason, _req, _state) do
     {:ok, _name} = @session_repository.remove(self())
     :ok
   end
