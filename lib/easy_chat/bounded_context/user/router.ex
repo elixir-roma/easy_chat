@@ -3,7 +3,6 @@ defmodule EasyChat.BoundedContext.User.Router do
   @moduledoc false
 
   alias EasyChat.BoundedContext.User.PostUser
-  alias EasyChat.BoundedContext.Session.Guardian, as: ECGuardian
 
   plug :match
 
