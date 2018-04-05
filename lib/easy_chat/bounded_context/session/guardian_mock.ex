@@ -19,19 +19,11 @@ defmodule EasyChat.BoundedContext.Session.GuardianMock do
   end
 
   ## Mock callbacks
-  def handle_call({:stub, stubbed_response}, from, {listeners, responses}) do
+  def handle_call({:stub, stubbed_response}, _from, {listeners, responses}) do
     {:reply, :ok, {listeners, [stubbed_response|responses]}}
   end
   def handle_call(:subscribe, {pid, _}, {listeners, stubbed_response}) do
     {:reply, :ok, {[pid | listeners], stubbed_response}}
-  end
-
-  def decode_and_verify(_) do
-    GenServer.call(__MODULE__, :stubbed)
-  end
-
-  def resource_from_token(_) do
-    GenServer.call(__MODULE__, :stubbed)
   end
 
   def handle_call({:side_effect, message}, _from, {listeners, _} = state) do
@@ -41,6 +33,14 @@ defmodule EasyChat.BoundedContext.Session.GuardianMock do
 
   def handle_call(:stubbed, _from, {listeners, [stubbed_response|rest]}) do
     {:reply, stubbed_response, {listeners, rest}}
+  end
+
+  def decode_and_verify(_) do
+    GenServer.call(__MODULE__, :stubbed)
+  end
+
+  def resource_from_token(_) do
+    GenServer.call(__MODULE__, :stubbed)
   end
 
   defp send_to_listeners(listeners, message) do
