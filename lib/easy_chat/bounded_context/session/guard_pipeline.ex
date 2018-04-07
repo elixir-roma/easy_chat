@@ -9,10 +9,4 @@ defmodule EasyChat.BoundedContext.Session.GuardPipeline do
   plug Guardian.Plug.VerifyHeader
   plug Guardian.Plug.LoadResource
   plug Guardian.Plug.EnsureAuthenticated
-
-  plug :dispatch
-
-  def dispatch(conn, opts) do
-    opts[:route].(conn)
-  end
 end

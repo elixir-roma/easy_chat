@@ -7,7 +7,7 @@ defmodule EasyChat.BoundedContext.Chat.Repository do
   end
 
   def start_link do
-    Agent.start_link(fn -> [] end, name: __MODULE__)
+    Agent.start_link(fn -> [%Message{sender: "test1", content: "cazzo"}, %Message{sender: "test1", content: "sto"}, %Message{sender: "test1", content: "Stocazzo jack"}] end, name: __MODULE__)
   end
 
   def insert(%Message{} = message) do
