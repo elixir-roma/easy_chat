@@ -29,6 +29,11 @@ type alias Login = { username : String
                    , error    : Bool
                    }
 
+type alias WsMessageFromServer = { command : String
+                                , content : String
+                                , sender  : String
+                                }
+
 initialLogin : Login
 initialLogin =
     Login "" "" "" False
