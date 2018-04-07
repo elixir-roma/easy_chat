@@ -1,3 +1,9 @@
 const Elm = require('../elm/Main.elm');
 
-var app = Elm.Main.fullscreen();
+const websocketProtocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
+
+const websocketHost = websocketProtocol + '//' + location.host + '/ws';
+
+var app = Elm.Main.fullscreen({
+    websocketHost: websocketHost
+});
