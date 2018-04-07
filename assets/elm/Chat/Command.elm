@@ -1,10 +1,11 @@
 module Chat.Command exposing (..)
 
-import Models exposing (Message, Model)
+import Models exposing (Message, Model, WsMessageFromServer)
 import Msgs exposing (Msg(..))
 import Json.Decode as Decode
 import Json.Encode as Encode
 import Jwt exposing (JwtError)
+import List
 import Debug
 
 api: String
@@ -72,9 +73,15 @@ generateMessage : Model -> String
 generateMessage model =
     case model.access_token of
         Just access_token ->
-            "{\"jwt\": \"" ++ access_token ++ "\", \"command\": \"msg\", \"content\": \"" ++ model.newMessage ++ "\"}"
+            Encode.object
+                [ ("jwt", Encode.string access_token)
+                , ("command", Encode.string "msg")
+                , ("content", Encode.string model.newMessage)
+                ]
+            |> Encode.encode 0
         Nothing ->
             ""
+
 generateJoinChatMessage : String -> String
 generateJoinChatMessage access_token =
     Encode.object
@@ -85,5 +92,38 @@ generateJoinChatMessage access_token =
 
 parseWebsocketMessage : Model -> String -> (Model, Cmd Msg)
 parseWebsocketMessage model wsMessage =
-    Debug.log wsMessage
-    (model, Cmd.none)
+    case Decode.decodeString decodeWsMessage wsMessage of
+        Ok wsMessageFromServer ->
+            case wsMessageFromServer.command of
+                "msg" ->
+                    let
+                        message : Message
+                        message = Message wsMessageFromServer.sender wsMessageFromServer.content
+                        messages : List Message
+                        messages = List.append model.messages [message]
+                    in
+                        Debug.log "It's a message"
+                        ({model | messages = messages}, Cmd.none)
+                "user_join" ->
+                    let
+                        people : List String
+                        people = List.append model.people [wsMessageFromServer.content]
+                    in
+                        Debug.log "It's a join"
+                        ({model | people = people}, Cmd.none)
+                _ ->
+                    Debug.log "It's a wsMessage"
+                    (model, Cmd.none)
+        Err error ->
+            Debug.log "It isn't a wsMessage"
+            (model, Cmd.none)
+
+decodeWsMessage : Decode.Decoder WsMessageFromServer
+decodeWsMessage =
+    Decode.map3 WsMessageFromServer
+        (Decode.field "command" Decode.string)
+        (Decode.field "content" Decode.string)
+        (Decode.oneOf [ (Decode.field "sender" Decode.string)
+                      , Decode.succeed ""
+                      ]
+        )
