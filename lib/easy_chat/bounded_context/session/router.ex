@@ -11,7 +11,8 @@ defmodule EasyChat.BoundedContext.Session.Router do
   post "/", to: PostSession
 
   get "/"  do
-    GuardPipeline.call(conn, [])
+    conn
+    |> GuardPipeline.call([])
     |> CgetSession.call([])
   end
 plug :dispatch

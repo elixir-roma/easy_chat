@@ -4,7 +4,6 @@ defmodule EasyChat.BoundedContext.Session.RouterTest do
 
   alias EasyChat.BoundedContext.Session.Router
   alias EasyChat.BoundedContext.User.Repository, as: Repo
-  alias EasyChat.BoundedContext.Session.RepositoryMock, as: MockedSessionRepo
 
   @opts Router.init([])
 
@@ -33,17 +32,4 @@ defmodule EasyChat.BoundedContext.Session.RouterTest do
 
     assert conn.status == 401
   end
-
-#  test "Get / should return 401 without a token" do
-
-#    MockedSessionRepo.start_link([])
-#    MockedSessionRepo.stub([{"other_user", self()}])
-
-#    conn = :get
-#    |> conn("/")
-#    |> Router.call(@opts)
-
-#    assert conn.status == 401
-#  end
-
 end
