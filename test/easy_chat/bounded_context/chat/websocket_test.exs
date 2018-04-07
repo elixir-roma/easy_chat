@@ -26,7 +26,7 @@ defmodule EasyChat.BoundedContext.Chat.WebsocketTest do
     Auth.start_link([])
     SessionRepo.subscribe()
     SessionRepo.stub([{"other_user", self()}])
-    Auth.stub("testuser")
+    Auth.stub({:ok, "testuser", %{}})
     Auth.stub({:ok, []})
 
     data = %{"jwt" => "valid_jwt", "command" => "join"}
@@ -44,7 +44,7 @@ defmodule EasyChat.BoundedContext.Chat.WebsocketTest do
     SessionRepo.subscribe()
     MessageRepo.subscribe()
     SessionRepo.stub([{"other_user", self()}])
-    Auth.stub("testuser")
+    Auth.stub({:ok, "testuser", %{}})
     Auth.stub({:ok, []})
 
     data = %{"jwt" => "valid_jwt", "command" => "msg", "content" => "test message"}
