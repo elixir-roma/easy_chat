@@ -8,9 +8,9 @@ defmodule EasyChat.BoundedContext.Chat.Router do
   plug :match
 
   get "/"  do
-    GuardPipeline.call(conn, route: fn conn ->
-      CgetMessages.call(conn, [])
-    end)
+    conn
+    |> GuardPipeline.call([])
+    |> CgetMessages.call([])
   end
 
   plug :dispatch

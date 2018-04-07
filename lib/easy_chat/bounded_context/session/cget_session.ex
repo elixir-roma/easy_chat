@@ -7,7 +7,7 @@ defmodule EasyChat.BoundedContext.Session.CgetSession do
   def init(opts), do: opts
 
   def call(conn, _) do
-    content = Poison.encode! @repo.get_all()
+    content = Poison.encode! Enum.map(@repo.get_all(), fn {user, _} -> user end)
     conn
     |> resp(200, content)
     |> send_resp
