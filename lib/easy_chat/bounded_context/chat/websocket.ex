@@ -17,8 +17,8 @@ defmodule EasyChat.BoundedContext.Chat.Websocket do
     {:ok, req, state, @timeout}
   end
 
-  def websocket_handle({:text, "ping"}, req, state) do
-    {:reply, {:text, "pong"}, req, state}
+  def websocket_handle({:ping, "PING"}, req, state) do
+    {:reply, {:pong, "PONG"}, req, state}
   end
 
   def websocket_handle({:text, data}, req, state) do
