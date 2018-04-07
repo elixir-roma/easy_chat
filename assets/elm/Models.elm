@@ -1,10 +1,12 @@
 module Models exposing (..)
 
-type alias Model = { route : Route
-                   , login : Login
-                   , access_token : Maybe String
-                   , people : List String
-                   , messages: List Message
+type alias Model = { route         : Route
+                   , login         : Login
+                   , access_token  : Maybe String
+                   , people        : List String
+                   , messages      : List Message
+                   , websocketHost : String
+                   , newMessage    : String
                    }
 
 type Route
@@ -17,7 +19,7 @@ type alias Credentials =
     { access_token : String }
 
 type alias Message =
-    { username : String
+    { sender  : String
     , content : String
     }
 
@@ -31,6 +33,6 @@ initialLogin : Login
 initialLogin =
     Login "" "" "" False
 
-initialModel : Route -> Model
-initialModel route
-    = Model route initialLogin Nothing ["An User"] [ Message "An User" "My first message"]
+initialModel : Route -> String -> Model
+initialModel route websocketHost
+    = Model route initialLogin Nothing [] [] websocketHost ""

@@ -2,12 +2,20 @@ module Update exposing(..)
 
 import Routing exposing (parseLocation)
 import Msgs exposing (Msg(..))
-import Models exposing (Model, Login, Credentials)
-
+import Models exposing (Model, Login, Credentials, Route(..))
+import Chat.Command exposing ( fetchMessages
+                             , fetchUsers
+                             , getUsersCompleted
+                             , getMessagesCompleted
+                             , generateMessage
+                             , generateJoinChatMessage
+                             , parseWebsocketMessage)
 import Http exposing (..)
 import Json.Decode as Decode exposing (..)
 import Json.Encode as Encode exposing (..)
 import Navigation exposing (newUrl)
+import Debug
+import WebSocket
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
@@ -18,8 +26,20 @@ update msg model =
       let
         newRoute =
             parseLocation model location
+        cmd = case model.access_token of
+                  Just access_token ->
+                      if newRoute == ChatRoute then
+                          Cmd.batch [ fetchMessages access_token
+                                    , fetchUsers access_token
+                                    , WebSocket.send model.websocketHost
+                                        <| generateJoinChatMessage access_token
+                                    ]
+                      else
+                          Cmd.none
+                  Nothing ->
+                      Cmd.none
       in
-        ( { model | route = newRoute }, Cmd.none )
+        ( { model | route = newRoute }, cmd )
     UpdatePassword password ->
       let
         login : Login
@@ -53,6 +73,19 @@ update msg model =
         ( model, authUserCmd model registerUrl )
     GetTokenCompleted result ->
         getTokenCompleted model result
+    WsMessage msg ->
+        parseWebsocketMessage model msg
+    UsersFetched result ->
+        getUsersCompleted model result
+    MessagesFetched result ->
+        getMessagesCompleted model result
+    NewMessageUpdate msg ->
+        ( { model | newMessage = msg }, Cmd.none )
+    SendNewMessage ->
+        ( { model | newMessage = "" }
+        , WebSocket.send model.websocketHost
+            <| generateMessage model
+        )
 
 api: String
 api = "/api/"

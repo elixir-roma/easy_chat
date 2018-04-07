@@ -1,31 +1,37 @@
 module Main exposing (..)
 
 import Models exposing (Model, initialModel, Route(..))
-import Msgs exposing (Msg)
+import Msgs exposing (Msg(..))
 import Navigation exposing (Location)
-import Routing
 import Update exposing (update)
 import View exposing (view)
+import WebSocket exposing (listen)
 
+type alias Flags =
+  { websocketHost : String }
 
-init : Location -> ( Model, Cmd Msg )
-init location =
+init : Flags -> Location -> ( Model, Cmd Msg )
+init flags location =
     let
         currentRoute = LoginRoute
     in
-        ( initialModel currentRoute, Cmd.none )
+        ( initialModel currentRoute flags.websocketHost, Cmd.none )
 
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    Sub.none
+    case model.route of
+        ChatRoute ->
+            listen model.websocketHost WsMessage
+        _ ->
+            Sub.none
 
-
-main : Program Never Model Msg
-main =
-    Navigation.program Msgs.OnLocationChange
+main : Program Flags Model Msg
+main = 
+    Navigation.programWithFlags Msgs.OnLocationChange
         { init          = init
         , view          = view
         , update        = update
         , subscriptions = subscriptions
         }
+

@@ -1,7 +1,7 @@
 module Chat.View exposing (..)
 
 import Models exposing (Model, Message)
-import Msgs exposing (Msg)
+import Msgs exposing (Msg(..))
 import Html exposing ( Html
                      , text
                      , span
@@ -23,7 +23,9 @@ import Html.Attributes exposing ( attribute
                                 , href
                                 , placeholder
                                 , rows
+                                , value
                                 )
+import Html.Events exposing (onInput, onClick)
 
 view : Model -> Html Msg
 view model =
@@ -77,11 +79,11 @@ view model =
                         ] <| List.map generate_message_item model.messages
                       , div [ class "field has-addons" ]
                           [ div [ class "control", attribute "style" "width: 100%" ]
-                                [ textarea [ class "textarea", placeholder "Your message...", rows 1 ]
+                                [ textarea [ class "textarea", placeholder "Your message...", rows 1, value model.newMessage, onInput NewMessageUpdate ]
                                       []
                                 ]
                           , div [ class "control" ]
-                              [ a [ class "button is-primary", attribute "style" "height: 46px" ] [ text "Send" ]
+                              [ a [ class "button is-primary", attribute "style" "height: 46px", onClick SendNewMessage ] [ text "Send" ]
                               ]
                           ]
                       ]
@@ -113,7 +115,7 @@ generate_message_item message =
                     [ div [ class "media-left" ]
                           [ p []
                                 [ strong []
-                                      [ text <| message.username ++ ":" ]
+                                      [ text <| message.sender ++ ":" ]
                                 ]
                           ]
                     , div [ class "media-content" ]
