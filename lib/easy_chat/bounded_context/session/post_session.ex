@@ -20,7 +20,7 @@ defmodule EasyChat.BoundedContext.Session.PostSession do
 
   def response_with_token_pair(user, conn) do
     {:ok, access_token, _} =
-      Guardian.encode_and_sign(user, %{})
+      Guardian.encode_and_sign(user, %{}, [ttl: {1, :week}])
 
     content = %{"access_token" => access_token}
     |> Poison.encode!
