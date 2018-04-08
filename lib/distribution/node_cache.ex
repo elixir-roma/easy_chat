@@ -47,7 +47,7 @@ defmodule NodeCache do
   def get_users_weight do
     {rep, bad} = GenServer.multi_call(
       [Node.self] ++ Node.list,
-      NodeRepository,
+      UserNodeRepository,
       :get_users_weight
     )
     for v <- rep, do: maybe_insert_to_cache(v)
@@ -65,7 +65,7 @@ defmodule NodeCache do
   def fetch_user(username, password) do
     {rep, bad} = GenServer.multi_call(
       [Node.self] ++ Node.list,
-      NodeRepository,
+      UserNodeRepository,
       {:fetch, username, password}
     )
     maybe_nodes_error(bad)
@@ -82,7 +82,7 @@ defmodule NodeCache do
   def user_exist(username) do
     {rep, bad} =
       GenServer.multi_call([Node.self] ++ Node.list,
-        NodeRepository, {:exist, username})
+        UserNodeRepository, {:exist, username})
     maybe_nodes_error(bad)
     maybe_exist? Enum.filter(rep, fn ({_, value}) -> value != :false end)
   end
@@ -95,7 +95,7 @@ defmodule NodeCache do
   def maybe_insert_into_db?(:false, node_destination, username, password) do
     {rep, bad} = GenServer.multi_call(
       [node_destination],
-      NodeRepository,
+      UserNodeRepository,
       {:insert, username, password}
     )
     maybe_nodes_error(bad)
@@ -103,7 +103,7 @@ defmodule NodeCache do
   end
   ##########################################################
 
-  ###### GenServer Handle ##################################
+  ###### GenServer Handler ##################################
   def handle_info(:update_cache, state) do
     Process.send_after(self(), :update_cache, 5_000)
     get_users_weight()
