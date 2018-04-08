@@ -6,7 +6,7 @@ import Navigation exposing (Location)
 import Update exposing (update)
 import View exposing (view)
 import WebSocket exposing (listen)
-
+import Time 
 type alias Flags =
   { websocketHost : String }
 
@@ -22,7 +22,9 @@ subscriptions : Model -> Sub Msg
 subscriptions model =
     case model.route of
         ChatRoute ->
-            listen model.websocketHost WsMessage
+            Sub.batch [ listen model.websocketHost WsMessage
+                      , Time.every (Time.second * 30) Heartbeat
+                      ]
         _ ->
             Sub.none
 
