@@ -2,6 +2,8 @@ defmodule EasyChat.BoundedContext.Chat.Websocket do
   @moduledoc false
   @behaviour :cowboy_websocket_handler
 
+  require Logger
+
   @session_repository Application.get_env(:easy_chat, :session_repo)
   @message_repository Application.get_env(:easy_chat, :message_repo)
   @auth Application.get_env(:easy_chat, :auth)
@@ -17,8 +19,8 @@ defmodule EasyChat.BoundedContext.Chat.Websocket do
     {:ok, req, state, @timeout}
   end
 
-  def websocket_handle({:ping, "PING"}, req, state) do
-    {:reply, {:pong, "PONG"}, req, state}
+  def websocket_handle({:text, "PING"}, req, state) do
+    {:reply, {:text, "PONG"}, req, state}
   end
 
   def websocket_handle({:text, data}, req, state) do
@@ -64,11 +66,14 @@ defmodule EasyChat.BoundedContext.Chat.Websocket do
   end
 
   def websocket_terminate(_reason, _req, _state) do
+    Logger.info "termina un websocket"
     case @session_repository.remove(self()) do
       {:ok, name} ->
+        Logger.info "#{name} is leaving"
         @session_repository.get_all()
         |> Enum.each(fn {_, pid} -> send pid, {:leave, name} end)
       _ ->
+        Logger.info "Ma non c'era nessuno agganciato"
         :ok
     end
   end

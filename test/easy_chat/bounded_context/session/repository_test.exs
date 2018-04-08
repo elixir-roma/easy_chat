@@ -20,7 +20,8 @@ defmodule EasyChat.BoundedContext.Session.RepositoryTest do
 
   test "It should remove an entry by pid" do
     Subject.insert {"test", "a websocket pid"}
-    Subject.remove  "a websocket pid"
+    assert {:ok, "test"} == Subject.remove "a websocket pid"
+    assert {:ok, nil} == Subject.remove "unexistent"
 
     refute Enum.member? Subject.get_all(), {"test", "a websocket pid"}
   end
