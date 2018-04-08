@@ -3,6 +3,7 @@ import Navigation exposing (Location)
 import Http exposing (Error)
 import Models exposing (Credentials, Message)
 import Jwt exposing (JwtError)
+import Time exposing (Time)
 
 type Msg
     = UpdatePassword String
@@ -18,3 +19,4 @@ type Msg
     | MessagesFetched (Result JwtError (List Message))
     | NewMessageUpdate String
     | SendNewMessage
+    | Heartbeat Time

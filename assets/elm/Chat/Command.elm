@@ -102,20 +102,27 @@ parseWebsocketMessage model wsMessage =
                         messages : List Message
                         messages = List.append model.messages [message]
                     in
-                        Debug.log "It's a message"
+                        Debug.log wsMessage
                         ({model | messages = messages}, Cmd.none)
                 "user_join" ->
                     let
                         people : List String
                         people = List.append model.people [wsMessageFromServer.content]
                     in
-                        Debug.log "It's a join"
+                        Debug.log wsMessage
+                        ({model | people = people}, Cmd.none)
+                "user_leave" ->
+                    let
+                        people : List String
+                        people = List.filter (\name -> name /= wsMessageFromServer.content) model.people
+                    in
+                        Debug.log wsMessage
                         ({model | people = people}, Cmd.none)
                 _ ->
-                    Debug.log "It's a wsMessage"
+                    Debug.log wsMessage
                     (model, Cmd.none)
         Err error ->
-            Debug.log "It isn't a wsMessage"
+            Debug.log wsMessage
             (model, Cmd.none)
 
 decodeWsMessage : Decode.Decoder WsMessageFromServer

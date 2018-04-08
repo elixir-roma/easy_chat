@@ -86,6 +86,9 @@ update msg model =
         , WebSocket.send model.websocketHost
             <| generateMessage model
         )
+    Heartbeat _ ->
+        Debug.log "sending ping"
+        (model, WebSocket.send model.websocketHost "PING")
 
 api: String
 api = "/api/"
