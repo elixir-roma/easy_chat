@@ -10,3 +10,5 @@ priv/static/css
 priv/static/fonts
 assets/node_modules
 assets/elm/elm-stuff
+.idea
+assets/yarn-error.log

@@ -1,4 +1,4 @@
-defmodule NodeRepository do
+defmodule UserNodeRepository do
   @moduledoc false
 
   require Logger
