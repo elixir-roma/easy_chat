@@ -37,12 +37,12 @@ view model =
         ]
         [ div [ class "navbar-brand" ]
           [ a [ class "navbar-item"
-              , href "https://bulma.io"
+              , href "/"
               ]
             [ img [ alt "Bulma: a modern CSS framework based on Flexbox"
                   , attribute "height" "28"
-                  , src "https://bulma.io/images/bulma-logo.png"
-                  , attribute "width" "112"
+                  , src "/images/logo.png"
+                  , attribute "width" "42"
                   ]
               []
             ]
@@ -56,7 +56,7 @@ view model =
           [ div [ class "navbar-end" ]
             [ div [ class "navbar-item" ]
               [ p [ class "control" ]
-                [ a [ class "button is-danger", href "/logout"]
+                [ a [ class "button is-danger", href "/"]
                   [span [ class "icon"]
                     [ i [class "fa fa-sign-out"] []]
                   , span [] [text "Logout"]

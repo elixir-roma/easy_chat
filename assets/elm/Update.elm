@@ -21,7 +21,14 @@ update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
   case msg of
     NavigateTo url ->
-        (model, newUrl url)
+        let
+            login : Login
+            login = model.login
+            newLogin : Login
+            newLogin =
+                { login | error = False }
+        in
+            ({model | login = newLogin}, newUrl url)
     OnLocationChange location ->
       let
         newRoute =
