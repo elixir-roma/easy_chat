@@ -48,7 +48,7 @@ view login =
 loginAvatar : Html Msg
 loginAvatar =
   figure [ class "avatar" ]
-    [ img [ src "https://placehold.it/128x128" ]
+    [ img [ src "/images/login.png" ]
         []
     ]
 

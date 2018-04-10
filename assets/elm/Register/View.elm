@@ -23,6 +23,7 @@ import Html.Attributes exposing (class
                                 , placeholder
                                 , type_
                                 , href
+                                , disabled
                                 , value)
 
 view : Login -> Html Msg
@@ -55,7 +56,7 @@ view login =
 loginAvatar : Html Msg
 loginAvatar =
   figure [ class "avatar" ]
-    [ img [ src "https://placehold.it/128x128" ]
+    [ img [ src "/images/sign-in.png" ]
         []
     ]
 
@@ -89,7 +90,7 @@ loginForm login =
       ]
     , div [ class "field" ]
       [ div [ class "control" ]
-        [ input [ class <| "input is-large" ++ if login.error then " is-danger" else ""
+        [ input [ class <| "input is-large" ++ if login.error || login.password /= login.repeat_password then " is-danger" else ""
                 , placeholder "Your Password"
                 , type_ "password"
                 , onInput UpdatePassword
@@ -100,7 +101,7 @@ loginForm login =
       ]
     , div [ class "field" ]
       [ div [ class "control" ]
-        [ input [ class <| "input is-large" ++ if login.error then " is-danger" else ""
+        [ input [ class <| "input is-large" ++ if login.error || login.password /= login.repeat_password then " is-danger" else ""
                 , placeholder "Repeat Password"
                 , type_ "password"
                 , onInput UpdateRepeatPassword
@@ -116,6 +117,7 @@ loginForm login =
                  }
                    <| Decode.succeed
                    <| NewUser
+             , disabled (login.password /= login.repeat_password)
              ]
       [ text "Login" ]
     ]
