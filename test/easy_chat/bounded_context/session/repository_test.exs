@@ -15,7 +15,6 @@ defmodule EasyChat.BoundedContext.Session.RepositoryTest do
 
     refute Enum.member? Subject.get_all(), {"test", "a websocket pid"}
     assert Enum.member? Subject.get_all(), {"test", "another websocket pid"}
-    
   end
 
   test "It should remove an entry by pid" do
