@@ -36,11 +36,11 @@ defmodule EasyChat.BoundedContext.Chat.RepositoryMock do
     {:reply, stubbed_response, state}
   end
 
-  def insert(content) do
+  def insert_c(content) do
     GenServer.call(__MODULE__, {:side_effect, {:insert, content}})
   end
 
-  def get_all do
+  def get_all_c do
     GenServer.call(__MODULE__, :stubbed)
   end
 
