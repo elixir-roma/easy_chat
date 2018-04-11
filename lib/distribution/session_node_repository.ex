@@ -17,7 +17,7 @@ defmodule SessionNodeRepository do
 
   def handle_call({:get_all}, _from, state) do
     Logger.info "inner get_all_session : #{inspect(:get_all)}"
-    r = SessionRepository.get_all
+    r = SessionNodeRepository.get_all
     {:reply, r, state}
   end
 
