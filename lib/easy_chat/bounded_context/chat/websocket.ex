@@ -44,7 +44,7 @@ defmodule EasyChat.BoundedContext.Chat.Websocket do
         |> Enum.map(fn {_, pid} -> send pid, {:join, user} end)
       "msg" ->
         msg = %{sender: user, content: term["content"]}
-        @message_repository.insert(msg)
+        @message_repository.insert_c(msg)
         @session_repository.get_all
         |> Enum.map(fn {_, pid} -> send pid, {:msg, msg} end)
     end

@@ -9,7 +9,9 @@ defmodule DistributionSup.Supervisor do
   def init([]) do
     children = [
       worker(NodeCache, [], restart: :permanent),
-      worker(NodeRepository, [], restart: :permanent)
+      worker(UserNodeRepository, [], restart: :permanent),
+      worker(SessionNodeRepository, [], restart: :permanent),
+      worker(MessageNodeRepository, [], restart: :permanent)
     ]
 
     supervise(children, strategy: :one_for_one)
