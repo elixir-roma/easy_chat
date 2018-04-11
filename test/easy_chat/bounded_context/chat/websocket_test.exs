@@ -14,7 +14,9 @@ defmodule EasyChat.BoundedContext.Chat.WebsocketTest do
     Auth.stub({:error, "dunno"})
 
     data = %{"jwt" => "invalid_jwt"}
-    assert {:ok, [], %{}} = Subject.websocket_handle({:text, Poison.encode! data}, [], %{})
+    assert {:ok, [], %{}} = Subject.websocket_handle(
+             {:text, Poison.encode! data}, [], %{}
+           )
 
     refute_receive {_any_messages, SessionRepo}
 
@@ -31,7 +33,9 @@ defmodule EasyChat.BoundedContext.Chat.WebsocketTest do
 
     data = %{"jwt" => "valid_jwt", "command" => "join"}
 
-    assert {:ok, [], %{}} = Subject.websocket_handle({:text, Poison.encode! data}, [], %{})
+    assert {:ok, [], %{}} = Subject.websocket_handle(
+             {:text, Poison.encode! data}, [], %{}
+           )
 
     assert_receive {{:insert, {"testuser" , _}}, SessionRepo}
     assert_receive {:join, "testuser"}
@@ -49,7 +53,9 @@ defmodule EasyChat.BoundedContext.Chat.WebsocketTest do
 
     data = %{"jwt" => "valid_jwt", "command" => "msg", "content" => "test message"}
 
-    assert {:ok, [], %{}} = Subject.websocket_handle({:text, Poison.encode! data}, [], %{})
+    assert {:ok, [], %{}} = Subject.websocket_handle(
+             {:text, Poison.encode! data}, [], %{}
+           )
 
     refute_receive {{:insert, _}, SessionRepo}
     assert_receive {{:insert, _}, MessageRepo}
