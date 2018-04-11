@@ -10,13 +10,36 @@ defmodule NodeCache do
     GenServer.call(__MODULE__, :messages_status)
   end
 
-  def insert(%{"username" => username, "password" => password}) do
-    GenServer.call(__MODULE__, {:insert_to_lower, username, password})
-  end
-
+  ######### Users interface ###############################
   def fetch(%{"username" => username, "password" => password}) do
     GenServer.call(__MODULE__, {:fetch, username, password})
   end
+
+  def insert_c(message) do
+    GenServer.call(__MODULE__, {:insert_message_to_lower, message})
+  end
+
+  def insert(%{"username" => username, "password" => password}) do
+    GenServer.call(__MODULE__, {:insert_user_to_lower, username, password})
+  end
+
+  ######### Session interface ###############################
+  def insert({user, pid}) do
+    GenServer.call(__MODULE__, {:insert_session, user, pid})
+  end
+
+  def get_all do
+    GenServer.call(__MODULE__, :get_all_session)
+  end
+
+  def get_all_c do
+    GenServer.call(__MODULE__, :get_all_messages)
+  end
+
+  def remove(pid) do
+    GenServer.call(__MODULE__, {:remove_session, pid})
+  end
+  #####################################################
 
   use GenServer
 
@@ -40,7 +63,7 @@ defmodule NodeCache do
   end
 
   ######### Users Cache Count ###############################
-  def maybe_insert_to_cache({nodename, {:users_count, value}}) do
+  def maybe_insert_user_to_cache({nodename, {:users_count, value}}) do
     :true = :ets.insert(:users_weight, {nodename, :users_count, value})
   end
 
@@ -50,7 +73,22 @@ defmodule NodeCache do
       UserNodeRepository,
       :get_users_weight
     )
-    for v <- rep, do: maybe_insert_to_cache(v)
+    for v <- rep, do: maybe_insert_user_to_cache(v)
+    maybe_nodes_error(bad)
+  end
+
+  ######### Messages Cache Count ###############################
+  def maybe_insert_messages_to_cache({nodename, {:messages_count, value}}) do
+    :true = :ets.insert(:messages_weight, {nodename, :messages_count, value})
+  end
+
+  def get_messages_weight do
+    {rep, bad} = GenServer.multi_call(
+      [Node.self] ++ Node.list,
+      MessageNodeRepository,
+      :get_messages_weight
+    )
+    for v <- rep, do: maybe_insert_messages_to_cache(v)
     maybe_nodes_error(bad)
   end
 
@@ -81,8 +119,11 @@ defmodule NodeCache do
   ###### Insert user to DB #################################
   def user_exist(username) do
     {rep, bad} =
-      GenServer.multi_call([Node.self] ++ Node.list,
-        UserNodeRepository, {:exist, username})
+      GenServer.multi_call(
+        [Node.self] ++ Node.list,
+        UserNodeRepository,
+        {:exist, username}
+      )
     maybe_nodes_error(bad)
     maybe_exist? Enum.filter(rep, fn ({_, value}) -> value != :false end)
   end
@@ -103,10 +144,37 @@ defmodule NodeCache do
   end
   ##########################################################
 
+  def nodes_info([head | tail], accumulator, fun_items) do
+    acc1 = fun_items.(head, accumulator)
+    nodes_info(tail, acc1, fun_items)
+  end
+
+  def nodes_info([], accumulator, _) do
+    accumulator
+  end
+
+  def users_cluster_to_list({node, [head | tail]}, accumulator) do
+    {user, pid} = head
+    users_cluster_to_list({node, tail}, accumulator ++ [{user, pid}])
+  end
+
+  def users_cluster_to_list({_, []}, accumulator) do
+    accumulator
+  end
+
+  def messages_cluster_to_list({node, [head | tail]}, accumulator) do
+    messages_cluster_to_list({node, tail}, accumulator ++ [head])
+  end
+
+  def messages_cluster_to_list({_, []}, accumulator) do
+    accumulator
+  end
+
   ###### GenServer Handler ##################################
   def handle_info(:update_cache, state) do
     Process.send_after(self(), :update_cache, 5_000)
     get_users_weight()
+    get_messages_weight()
     {:noreply, state}
   end
   def handle_info({:EXIT, _pid, _reason}, state) do
@@ -119,7 +187,7 @@ defmodule NodeCache do
     {:reply, w, state}
   end
 
-  def handle_call({:insert_to_lower, username, password}, _from, state) do
+  def handle_call({:insert_user_to_lower, username, password}, _from, state) do
     sort_by_weight = Enum.sort(
       :ets.tab2list(:users_weight),
       fn ({_, _, value}, {_, _, valuey}) -> valuey > value end
@@ -132,8 +200,27 @@ defmodule NodeCache do
       username,
       password
     )
+    {:reply, result, state}
+  end
 
-    Logger.info "Insert to lower result: #{inspect(result)}"
+  def handle_call({:insert_message_to_lower, message}, _from, state) do
+    sort_by_weight = Enum.sort(
+      :ets.tab2list(:messages_weight),
+      fn ({_, _, value}, {_, _, valuey}) -> valuey > value end
+    )
+    {node_destination, _, _} = List.first(sort_by_weight)
+
+    Logger.info "Insert message to lower result: #{inspect(node_destination)}"
+
+    {rep, bad} = GenServer.multi_call(
+      [node_destination],
+      MessageNodeRepository,
+      {:insert_message, message}
+    )
+    maybe_nodes_error(bad)
+    Logger.info "Rep Rep Rer: #{inspect(rep)}"
+    {_, result} = List.first(rep)
+
     {:reply, result, state}
   end
 
@@ -146,6 +233,38 @@ defmodule NodeCache do
   def handle_call(:messages_status, _from, state) do
     w = :ets.tab2list(:messages_weight)
     {:reply, w, state}
+  end
+
+  def handle_call({:insert_session, user, pid}, _from, state) do
+    r = EasyChat.BoundedContext.Session.Repository.insert({user, pid})
+    {:reply, r, state}
+  end
+
+  def handle_call(:get_all_session, _from, state) do
+    {rep, bad} = GenServer.multi_call(
+      [Node.self] ++ Node.list,
+      SessionNodeRepository,
+      {:get_all}
+    )
+    maybe_nodes_error(bad)
+    rp = nodes_info(rep, [], &users_cluster_to_list/2)
+    {:reply, rp, state}
+  end
+
+  def handle_call(:get_all_messages, _from, state) do
+    {rep, bad} = GenServer.multi_call(
+      [Node.self] ++ Node.list,
+      MessageNodeRepository,
+      {:get_all}
+    )
+    maybe_nodes_error(bad)
+    rp = nodes_info(rep, [], &messages_cluster_to_list/2)
+    {:reply, rp, state}
+  end
+
+  def handle_call({:remove_session, pid}, _from, state) do
+    r = EasyChat.BoundedContext.Session.Repository.remove(pid)
+    {:reply, r, state}
   end
 
   def handle_cast(_msg, state) do

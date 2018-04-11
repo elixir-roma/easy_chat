@@ -7,8 +7,8 @@ config :easy_chat, EasyChat.BoundedContext.Session.Guardian,
        token_module: Guardian.Token.Jwt
 
 config :easy_chat,
-  session_repo: EasyChat.BoundedContext.Session.Repository,
+  session_repo: NodeCache,
   auth: EasyChat.BoundedContext.Session.Guardian,
   user_repo: NodeCache,
-  message_repo: EasyChat.BoundedContext.Chat.Repository
+  message_repo: NodeCache
 
