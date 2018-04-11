@@ -2,6 +2,9 @@ defmodule NodeCache do
   @moduledoc false
 
   require Logger
+
+  alias EasyChat.BoundedContext.Session.Repository, as: SessionRepository
+
   def users_status do
     GenServer.call(__MODULE__, :users_status)
   end
@@ -236,7 +239,7 @@ defmodule NodeCache do
   end
 
   def handle_call({:insert_session, user, pid}, _from, state) do
-    r = EasyChat.BoundedContext.Session.Repository.insert({user, pid})
+    r = SessionRepository.insert({user, pid})
     {:reply, r, state}
   end
 
@@ -263,7 +266,7 @@ defmodule NodeCache do
   end
 
   def handle_call({:remove_session, pid}, _from, state) do
-    r = EasyChat.BoundedContext.Session.Repository.remove(pid)
+    r = SessionRepository.remove(pid)
     {:reply, r, state}
   end
 
