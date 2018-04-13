@@ -5,6 +5,7 @@ defmodule EasyChat.BoundedContext.Chat.WebsocketTest do
   alias EasyChat.BoundedContext.Session.RepositoryMock, as: SessionRepo
   alias EasyChat.BoundedContext.Chat.RepositoryMock, as: MessageRepo
   alias EasyChat.BoundedContext.Session.GuardianMock, as: Auth
+  alias EasyChat.BoundedContext.Chat.Repository.Message
 
   test "It should discard a message with a wrong token" do
     SessionRepo.start_link([])
@@ -19,7 +20,6 @@ defmodule EasyChat.BoundedContext.Chat.WebsocketTest do
            )
 
     refute_receive {_any_messages, SessionRepo}
-
   end
 
   test "It should join the chat with a right token, and all sessions should be notified" do
@@ -59,6 +59,6 @@ defmodule EasyChat.BoundedContext.Chat.WebsocketTest do
 
     refute_receive {{:insert, _}, SessionRepo}
     assert_receive {{:insert, _}, MessageRepo}
-    assert_receive {:msg, %{sender: "testuser", content: "test message"}}
+    assert_receive {:msg, %Message{}}
   end
 end

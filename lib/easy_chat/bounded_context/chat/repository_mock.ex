@@ -1,6 +1,8 @@
 defmodule EasyChat.BoundedContext.Chat.RepositoryMock do
   @moduledoc false
 
+  alias EasyChat.BoundedContext.Chat.Repository.Message
+
   def start_link([]) do
     GenServer.start_link(__MODULE__, [], [name: __MODULE__])
   end
@@ -38,6 +40,8 @@ defmodule EasyChat.BoundedContext.Chat.RepositoryMock do
 
   def insert_c(content) do
     GenServer.call(__MODULE__, {:side_effect, {:insert, content}})
+
+    %Message{}
   end
 
   def get_all_c do
