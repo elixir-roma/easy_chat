@@ -124,6 +124,10 @@ generate_message_item message =
                                       [ text message.content ]
                                 ]
                           ]
+                    , div [ class "content" ]
+                        [ p []
+                              [ text message.node ]
+                        ]
                     ]
               ]
 

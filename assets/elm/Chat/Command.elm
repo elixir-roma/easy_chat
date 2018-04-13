@@ -39,9 +39,13 @@ fetchMessages access_token =
 
 messageDecoder : Decode.Decoder Message
 messageDecoder =
-    Decode.map2 Message
+    Decode.map3 Message
         (Decode.field "sender" Decode.string)
         (Decode.field "content" Decode.string)
+        (Decode.oneOf [ (Decode.field "node" Decode.string)
+                      , Decode.succeed ""
+                      ]
+        )
 
 getUsersCompleted : Model -> Result JwtError (List String) -> ( Model, Cmd Msg )
 getUsersCompleted model result =
@@ -98,7 +102,7 @@ parseWebsocketMessage model wsMessage =
                 "msg" ->
                     let
                         message : Message
-                        message = Message wsMessageFromServer.sender wsMessageFromServer.content
+                        message = Message wsMessageFromServer.sender wsMessageFromServer.content wsMessageFromServer.node
                         messages : List Message
                         messages = List.append model.messages [message]
                     in
@@ -127,10 +131,14 @@ parseWebsocketMessage model wsMessage =
 
 decodeWsMessage : Decode.Decoder WsMessageFromServer
 decodeWsMessage =
-    Decode.map3 WsMessageFromServer
+    Decode.map4 WsMessageFromServer
         (Decode.field "command" Decode.string)
         (Decode.field "content" Decode.string)
         (Decode.oneOf [ (Decode.field "sender" Decode.string)
+                      , Decode.succeed ""
+                      ]
+        )
+        (Decode.oneOf [ (Decode.field "node" Decode.string)
                       , Decode.succeed ""
                       ]
         )

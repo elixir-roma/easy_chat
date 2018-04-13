@@ -21,6 +21,7 @@ type alias Credentials =
 type alias Message =
     { sender  : String
     , content : String
+    , node : String
     }
 
 type alias Login = { username : String
@@ -32,6 +33,7 @@ type alias Login = { username : String
 type alias WsMessageFromServer = { command : String
                                 , content : String
                                 , sender  : String
+                                , node : String
                                 }
 
 initialLogin : Login
