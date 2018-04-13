@@ -75,7 +75,8 @@ view model =
                       ]
                 , div [ class "column" ]
                       [ p
-                        [ attribute "style" "margin-top:auto;background-color: #ddd;height: calc(100vh - 100px);overflow:auto;"
+                        [ attribute "id" "chat"
+                        , attribute "style" "margin-top:auto;background-color: #ddd;height: calc(100vh - 100px);overflow:auto;"
                         ] <| List.map generate_message_item model.messages
                       , div [ class "field has-addons" ]
                           [ div [ class "control", attribute "style" "width: 100%" ]
@@ -90,7 +91,6 @@ view model =
                 ]
           ]
       ]
-
 
 generate_user_item : String -> Html Msg
 generate_user_item username =

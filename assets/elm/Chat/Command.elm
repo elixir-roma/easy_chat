@@ -7,6 +7,8 @@ import Json.Encode as Encode
 import Jwt exposing (JwtError)
 import List
 import Debug
+import Dom.Scroll
+import Task
 
 api: String
 api = "/api/"
@@ -107,7 +109,7 @@ parseWebsocketMessage model wsMessage =
                         messages = List.append model.messages [message]
                     in
                         Debug.log wsMessage
-                        ({model | messages = messages}, Cmd.none)
+                        ({model | messages = messages}, Task.attempt (always NoOp) <| Dom.Scroll.toBottom "chat")
                 "user_join" ->
                     let
                         people : List String

@@ -20,3 +20,4 @@ type Msg
     | NewMessageUpdate String
     | SendNewMessage
     | Heartbeat Time
+    | NoOp
